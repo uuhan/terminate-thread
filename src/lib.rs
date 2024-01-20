@@ -72,6 +72,9 @@ mod tests {
         let count_in_thread = count.clone();
         std::thread::spawn(move || loop {
             let count = count_in_thread.fetch_add(1, Relaxed);
+            if count >= 5 {
+                break;
+            }
             println!("[{count}] in std::thread loop");
             sleep(Duration::from_secs(1));
         });
