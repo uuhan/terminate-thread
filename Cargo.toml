@@ -1,9 +1,9 @@
 [package]
 name = "terminate-thread"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 repository = "https://github.com/uuhan/terminate-thread"
-description = "A simple stoppable thread impl with pthread"
+description = "A simple terminatable thread implemented with pthread"
 license = "MIT"
 
 include = [
@@ -24,5 +24,5 @@ include = [
 [dependencies]
 
 [build-dependencies]
-autotools = "0.2.6"
-bindgen = "0.69.2"
+autotools = "0.2"
+bindgen = "0.69"
