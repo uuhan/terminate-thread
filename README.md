@@ -46,3 +46,7 @@ It should work in any platform support *pthread*,
 
 but the real world is sophisticated to make any promise.
 
+## Issues
+
+- [ ] Terminate the thread too quick panics. 🚧
+

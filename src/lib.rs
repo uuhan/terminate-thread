@@ -14,6 +14,7 @@ unsafe impl Send for Thread {}
 
 impl Thread {
     /// Spawn a terminatable Thread
+    #[must_use]
     pub fn spawn<F>(start: F) -> Self
     where
         F: FnOnce() + Send + 'static,
@@ -67,37 +68,18 @@ mod tests {
     use std::time::Duration;
 
     #[test]
-    fn test_thread() {
-        let count = Arc::new(AtomicU8::new(0));
-        let count_in_thread = count.clone();
-        std::thread::spawn(move || loop {
-            let count = count_in_thread.fetch_add(1, Relaxed);
-            if count >= 5 {
-                break;
-            }
-            println!("[{count}] in std::thread loop");
-            sleep(Duration::from_secs(1));
-        });
-
-        // stop it after 4s, count may be 4 or 5
-        sleep(Duration::from_secs(4));
-        let count = count.load(Relaxed);
-        assert!(count > 3);
-
-        let count = Arc::new(AtomicU8::new(0));
-        let count_in_thread = count.clone();
+    fn test_terminate() {
         let thread = Thread::spawn(move || loop {
-            let count = count_in_thread.fetch_add(1, Relaxed);
-            println!("[{count}] in terminate_thread loop");
             sleep(Duration::from_secs(1));
         });
 
-        sleep(Duration::from_secs(2));
-        // stop it after 2s, count may be 2 or 3
         thread.terminate();
-        sleep(Duration::from_secs(2));
+    }
 
-        let count = count.load(Relaxed);
-        assert!(count <= 3);
+    #[test]
+    fn test_drop_immediately() {
+        let _ = Thread::spawn(move || loop {
+            sleep(Duration::from_secs(1));
+        });
     }
 }

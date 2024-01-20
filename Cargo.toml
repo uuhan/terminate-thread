@@ -1,6 +1,6 @@
 [package]
 name = "terminate-thread"
-version = "0.1.1"
+version = "0.1.2-alpha.0"
 edition = "2021"
 repository = "https://github.com/uuhan/terminate-thread"
 description = "A simple terminatable thread implemented with pthread"
