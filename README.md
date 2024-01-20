@@ -74,7 +74,9 @@ but the real world is sophisticated to make any promise.
 
 ## To-do 
 
-- [x] Terminate the job which panics. >= v0.3.0
+- [ ] Terminate the job which panics. >= v0.3.0 
+    - [x] macOS, >= v0.3.0
+    - [ ] Linux 🚧
 
 ```rust
 use terminate_thread::Thread;
