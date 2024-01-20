@@ -3,13 +3,13 @@ use terminate_thread::Thread;
 
 fn main() {
     let thread = Thread::spawn(|| loop {
-        println!("loop in main");
+        println!("infinite loop");
         sleep(Duration::from_secs(1));
-        panic!("thread panics");
     });
 
-    sleep(Duration::from_secs(2));
+    sleep(Duration::from_secs(5));
     thread.terminate();
 
-    std::thread::park();
+    sleep(Duration::from_secs(1));
+    println!("exit");
 }
