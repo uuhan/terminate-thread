@@ -12,7 +12,7 @@ do it with the standard `std::thread` without putting into some `Sync` thing.
 
 ```toml
 [dependencies]
-terminate-thread = "0.1.0"
+terminate-thread = "0.1"
 ```
 
 ```rust
