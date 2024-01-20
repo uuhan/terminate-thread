@@ -7,13 +7,13 @@ mod api {
 pub struct Thread(ThreadInner);
 
 struct ThreadInner {
-    inner: *mut api::stoppable_thread_t,
+    inner: *mut api::terminate_thread_t,
 }
 
 unsafe impl Send for Thread {}
 
 impl Thread {
-    /// Spawn A Stoppable Thread
+    /// Spawn a terminatable Thread
     pub fn spawn<F>(start: F) -> Self
     where
         F: FnOnce() + Send + Sync,
@@ -28,22 +28,22 @@ impl Thread {
         let data = Box::into_raw(cbox);
 
         unsafe {
-            let inner = api::stoppable_thread_create(Some(trampoile), data as _);
+            let inner = api::terminate_thread_create(Some(trampoile), data as _);
             Self(ThreadInner { inner })
         }
     }
 
     /// Stop The Spawned Thread
-    pub fn stop(&self) {
+    pub fn terminate(&self) {
         unsafe {
-            api::stoppable_thread_terminate(self.0.inner);
+            api::terminate_thread_terminate(self.0.inner);
         }
     }
 
     /// Yield Out The Current Thread
     pub fn r#yield(&self) {
         unsafe {
-            api::stoppable_thread_yield(self.0.inner);
+            api::terminate_thread_yield(self.0.inner);
         }
     }
 }
@@ -51,7 +51,7 @@ impl Thread {
 impl Drop for Thread {
     fn drop(&mut self) {
         unsafe {
-            api::stoppable_thread_drop(self.0.inner);
+            api::terminate_thread_drop(self.0.inner);
         }
     }
 }
@@ -88,13 +88,13 @@ mod tests {
         let count_in_thread = count.clone();
         let thread = Thread::spawn(move || loop {
             let count = count_in_thread.fetch_add(1, Relaxed);
-            println!("[{count}] in stoppable_thread loop");
+            println!("[{count}] in terminate_thread loop");
             sleep(Duration::from_secs(1));
         });
 
         sleep(Duration::from_secs(2));
         // stop it after 2s, count may be 2 or 3
-        thread.stop();
+        thread.terminate();
         sleep(Duration::from_secs(2));
 
         let count = count.load(Relaxed);

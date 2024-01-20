@@ -1,15 +1,15 @@
 
-typedef struct stoppable_thread_s stoppable_thread_t;
+typedef struct terminate_thread_s terminate_thread_t;
 
-stoppable_thread_t *
-stoppable_thread_create(void (*start)(void*), void* data);
-
-void
-stoppable_thread_terminate(stoppable_thread_t *thread);
+terminate_thread_t *
+terminate_thread_create(void (*start)(void*), void* data);
 
 void
-stoppable_thread_yield(stoppable_thread_t *thread);
+terminate_thread_terminate(terminate_thread_t *thread);
 
 void
-stoppable_thread_drop(stoppable_thread_t *thread);
+terminate_thread_yield(terminate_thread_t *thread);
+
+void
+terminate_thread_drop(terminate_thread_t *thread);
 

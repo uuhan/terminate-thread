@@ -1,6 +1,6 @@
 ## What is this?
 
-It's just a simple stoppable thread impl with *pthread*
+It's just a simple terminatable thread impl with *pthread*
 
 ## But Why?
 
@@ -11,7 +11,7 @@ do it with the standard `std::thread` without putting into some `Sync` thing.
 ## How to use it?
 
 ```rust
-use stoppable_thread::Thread;
+use terminate_thread::Thread;
 
 let thr = Thread::spawn(|| loop {
     // infinite loop the this thread
@@ -21,7 +21,7 @@ let thr = Thread::spawn(|| loop {
 
 std::thread::sleep(std::time::Duration::from_secs(2));
 // Just stop it
-thr.stop()
+thr.terminate()
 ```
 
 ## Not a good idea!

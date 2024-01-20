@@ -96,39 +96,39 @@ Thread::current()
 //  EXPORT TO RUST
 // ----------------------------------------
 
-struct stoppable_thread_s
+struct terminate_thread_s
 {
   Thread thr;
 
-  ~stoppable_thread_s()
+  ~terminate_thread_s()
   {
     if (thr.xarg || thr.xentry)
       thr.terminate();
   }
 };
 
-stoppable_thread_t *
-stoppable_thread_create(void (*start)(void*), void* data)
+terminate_thread_t *
+terminate_thread_create(void (*start)(void*), void* data)
 {
-  auto thread = new stoppable_thread_s;
+  auto thread = new terminate_thread_s;
   thread->thr.create(start, data);
   return thread;
 }
 
 void
-stoppable_thread_terminate(stoppable_thread_t *thread)
+terminate_thread_terminate(terminate_thread_t *thread)
 {
   thread->thr.terminate();
 }
 
 void
-stoppable_thread_yield(stoppable_thread_t *thread)
+terminate_thread_yield(terminate_thread_t *thread)
 {
   thread->thr.yield();
 }
 
 void
-stoppable_thread_drop(stoppable_thread_t *thread)
+terminate_thread_drop(terminate_thread_t *thread)
 {
     delete thread;
 }

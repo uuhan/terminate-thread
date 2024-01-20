@@ -272,14 +272,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a7cee0529a6d40f580e7a5e6c495c8fbfe21b7b52795ed4bb5e62cdf92bc6380"
 
 [[package]]
-name = "stoppable-thread"
-version = "0.1.0"
-dependencies = [
- "autotools",
- "bindgen",
-]
-
-[[package]]
 name = "syn"
 version = "2.0.48"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -288,6 +280,14 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
+]
+
+[[package]]
+name = "terminate-thread"
+version = "0.1.0"
+dependencies = [
+ "autotools",
+ "bindgen",
 ]
 
 [[package]]

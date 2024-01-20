@@ -1,8 +1,8 @@
 [package]
-name = "stoppable-thread"
+name = "terminate-thread"
 version = "0.1.0"
 edition = "2021"
-repository = "https://github.com/uuhan/stoppable-thread"
+repository = "https://github.com/uuhan/terminate-thread"
 description = "A simple stoppable thread impl with pthread"
 license = "MIT"
 
