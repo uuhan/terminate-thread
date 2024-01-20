@@ -70,15 +70,31 @@ mod tests {
     fn test_thread() {
         let count = Arc::new(AtomicU8::new(0));
         let count_in_thread = count.clone();
-        let thread = Thread::spawn(|| loop {
+        std::thread::spawn(move || loop {
             let count = count_in_thread.fetch_add(1, Relaxed);
-            println!("[{count}] in loop");
+            println!("[{count}] in std::thread loop");
+            sleep(Duration::from_secs(1));
+        });
+
+        // stop it after 4s, count may be 4 or 5
+        sleep(Duration::from_secs(4));
+        let count = count.load(Relaxed);
+        assert!(count > 3);
+
+        let count = Arc::new(AtomicU8::new(0));
+        let count_in_thread = count.clone();
+        let thread = Thread::spawn(move || loop {
+            let count = count_in_thread.fetch_add(1, Relaxed);
+            println!("[{count}] in stoppable_thread loop");
             sleep(Duration::from_secs(1));
         });
 
         sleep(Duration::from_secs(2));
+        // stop it after 2s, count may be 2 or 3
         thread.stop();
-        let count = count_in_thread.load(Relaxed);
-        assert_eq!(2, count);
+        sleep(Duration::from_secs(2));
+
+        let count = count.load(Relaxed);
+        assert!(count <= 3);
     }
 }
