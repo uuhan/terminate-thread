@@ -1,0 +1,28 @@
+[package]
+name = "stoppable-thread"
+version = "0.1.0"
+edition = "2021"
+home = "https://github.com/uuhan/stoppable-thread"
+description = "A simple stoppable thread impl with pthread"
+license = "MIT"
+
+include = [
+  "src/**/*",
+  "build.rs",
+  "cbits/Thread.cpp",
+  "cbits/Thread.h",
+  "cbits/wrapper.h",
+  "cbits/AUTHORS",
+  "cbits/ChangeLog",
+  "cbits/Makefile.am",
+  "cbits/NEWS",
+  "cbits/README",
+  "cbits/configure.ac",
+  "cbits/m4/ax_pthread.m4",
+]
+
+[dependencies]
+
+[build-dependencies]
+autotools = "0.2.6"
+bindgen = "0.69.2"
