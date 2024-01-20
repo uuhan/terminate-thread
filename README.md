@@ -50,3 +50,8 @@ but the real world is sophisticated to make any promise.
 
 - [ ] Terminate the thread too quick panics. 🚧
 
+```rust
+use terminate_thread::Thread;
+Thread::spawn(|| {}); // ← bus error
+```
+
