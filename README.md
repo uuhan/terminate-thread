@@ -49,21 +49,27 @@ It should work in any platform support *pthread*,
 
 but the real world is sophisticated to make any promise.
 
-## Issues
+## TODO
 
-- [x] Terminate the thread too quick panics. v0.2.0
-
-```rust
-use terminate_thread::Thread;
-Thread::spawn(|| {}); // ← bus error
-```
-
-- [x] Terminate the job which panics. v0.2.0
+- [ ] Terminate the job which panics. 🚧
 
 ```rust
 use terminate_thread::Thread;
 Thread::spawn(|| panic!());
 
 let thread  = Thread::spawn(|| panic!());
-thread.terminate();
+
+// thread.terminate();
+
+std::thread::sleep(std::time::Duration::from_millis(500));
 ```
+
+## Issue
+
+- [x] Terminate the thread too quick panics. >= v0.2.0
+
+```rust
+use terminate_thread::Thread;
+Thread::spawn(|| {}); // ← bus error
+```
+

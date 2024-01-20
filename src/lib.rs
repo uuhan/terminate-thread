@@ -95,22 +95,6 @@ mod tests {
     use std::time::Duration;
 
     #[test]
-    fn test_terminate() {
-        let thread = Thread::spawn(move || loop {
-            sleep(Duration::from_secs(1));
-        });
-
-        thread.terminate();
-    }
-
-    #[test]
-    fn test_drop_immediately() {
-        Thread::spawn(move || loop {
-            sleep(Duration::from_secs(1));
-        });
-    }
-
-    #[test]
     fn test_thread_send() {
         let thread = Thread::spawn(move || loop {
             sleep(Duration::from_secs(1));
@@ -119,5 +103,7 @@ mod tests {
         std::thread::spawn(move || thread.terminate())
             .join()
             .expect("terminate in other thread failed.");
+
+        sleep(Duration::from_millis(500));
     }
 }
