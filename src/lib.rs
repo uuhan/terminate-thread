@@ -16,15 +16,15 @@ impl Thread {
     /// Spawn a terminatable Thread
     pub fn spawn<F>(start: F) -> Self
     where
-        F: FnOnce() + Send + Sync,
+        F: FnOnce() + Send + 'static,
     {
         // Trampoile Function For FnOnce
         unsafe extern "C" fn trampoile(data: *mut std::os::raw::c_void) {
-            let callback: Box<Box<dyn FnOnce() + Send + Sync>> = Box::from_raw(data as _);
+            let callback: Box<Box<dyn FnOnce() + Send + 'static>> = Box::from_raw(data as _);
             callback()
         }
 
-        let cbox: Box<Box<dyn FnOnce() + Send + Sync>> = Box::new(Box::new(start));
+        let cbox: Box<Box<dyn FnOnce() + Send + 'static>> = Box::new(Box::new(start));
         let data = Box::into_raw(cbox);
 
         unsafe {
