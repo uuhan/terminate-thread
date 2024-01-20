@@ -284,7 +284,7 @@ dependencies = [
 
 [[package]]
 name = "terminate-thread"
-version = "0.2.1-alpha.0"
+version = "0.3.0"
 dependencies = [
  "autotools",
  "bindgen",

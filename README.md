@@ -12,24 +12,47 @@ do it with the standard `std::thread` without putting into some `Sync` thing.
 
 ```toml
 [dependencies]
-terminate-thread = "0.2"
+terminate-thread = "0.3"
 ```
 
-### 1. Terminate an infinite loop
+### Spawn your thread
 
 ```rust
 use terminate_thread::Thread;
+Thread::spawn(|| {}).join(); // ← spawn & join (>= 0.3.0) your thread
+```
 
+### Manually terminate your thread
+
+```rust
+use terminate_thread::Thread;
 let thr = Thread::spawn(|| loop {
     // infinite loop in this thread
     println!("loop run");
     std::thread::sleep(std::time::Duration::from_secs(1));
 });
-
 std::thread::sleep(std::time::Duration::from_secs(1));
+thr.terminate() // ← the thread is terminated manually!
+```
 
-// Just terminate it
-thr.terminate()
+### Auto terminate your thread
+
+```rust
+use terminate_thread::Thread;
+{
+    let _thread = Thread::spawn(|| loop {}); // ← the thread will be terminated when thread is dropped
+}
+```
+
+### Panic tolerant
+
+```rust
+use terminate_thread::Thread;
+Thread::spawn(|| panic!()); // ← this is fine
+let thread = Thread::spawn(|| panic!("your message")).join(); // ← thread stores the panic info
+assert!(thread.over() && thread.panics()); // ← it's over and panics
+let info = thread.panic_info().lock().unwrap().take().unwrap(); // ← take out the panic info
+assert_eq!(info.downcast_ref::<&str>().unwrap(), &"your message"); // ← get your panic info
 ```
 
 ## Not a good idea!
@@ -51,17 +74,14 @@ but the real world is sophisticated to make any promise.
 
 ## To-do 
 
-- [ ] Terminate the job which panics. 🚧
+- [x] Terminate the job which panics. >= v0.3.0
 
 ```rust
 use terminate_thread::Thread;
-Thread::spawn(|| panic!());
+Thread::spawn(|| panic!()); // ← this is fine
 
-let thread  = Thread::spawn(|| panic!());
-
-// thread.terminate();
-
-std::thread::sleep(std::time::Duration::from_millis(500));
+let thread = Thread::spawn(|| panic!()).join(); // ← thread stores the panic info
+assert!(thread.over() && thread.panics()); // ← it's over and panics
 ```
 
 ## Issue
