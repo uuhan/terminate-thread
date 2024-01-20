@@ -1,20 +1,25 @@
 ## What is this?
 
-It's just a simple terminatable thread impl with *pthread*
+It's just a simple terminatable thread implement with *pthread* for rust
 
 ## But Why?
 
-Some times, I need to terminate a blocked thread. There is no way to 
+Sometimes, I need to terminate a blocked thread. There is no way to 
 
 do it with the standard `std::thread` without putting into some `Sync` thing.
 
 ## How to use it?
 
+```toml
+[dependencies]
+terminate-thread = "0.1.0"
+```
+
 ```rust
 use terminate_thread::Thread;
 
 let thr = Thread::spawn(|| loop {
-    // infinite loop the this thread
+    // infinite loop in this thread
     println!("loop run");
     std::thread::sleep(std::time::Duration::from_secs(1));
 });
@@ -28,7 +33,7 @@ thr.terminate()
 
 Terminate a running thread is *ALWAYS A BAD IDEA*!
 
-The better way is to use somethink like `std::sync::atomic::AtomicBool`,
+The better way is to use something like `std::sync::atomic::AtomicBool`,
 
 to give your thread a chance to return.
 
