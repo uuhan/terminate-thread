@@ -60,10 +60,6 @@ impl Drop for Thread {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::sync::{
-        atomic::{AtomicU8, Ordering::Relaxed},
-        Arc,
-    };
     use std::thread::sleep;
     use std::time::Duration;
 

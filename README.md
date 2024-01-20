@@ -39,8 +39,8 @@ to give your thread a chance to return.
 
 ## Tested Platform
 
-- [x] linux
-- [x] macos
+- [x] Linux
+- [x] macOS
 
 It should work in any platform support *pthread*,
 
