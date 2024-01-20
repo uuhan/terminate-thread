@@ -1,50 +1,75 @@
 #![allow(non_camel_case_types)]
+use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
+use std::sync::{Arc, Mutex};
+
+#[allow(dead_code)]
 mod api {
     include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 }
+mod ext;
 
 #[doc = include_str!("../README.md")]
-pub struct Thread(ThreadInner);
+#[derive(Clone)]
+pub struct Thread(pub(crate) Arc<ThreadInner>);
 
 struct ThreadInner {
+    /// hold the Thread instance
     inner: *mut api::terminate_thread_t,
+    /// the call is over
+    over: Arc<AtomicBool>,
+    /// thread safty
+    guard: Mutex<()>,
 }
 
 unsafe impl Send for Thread {}
 
 impl Thread {
     /// Spawn a terminatable Thread
-    #[must_use]
     pub fn spawn<F>(start: F) -> Self
     where
         F: FnOnce() + Send + 'static,
     {
-        // Trampoile Function For FnOnce
-        unsafe extern "C" fn trampoile(data: *mut std::os::raw::c_void) {
-            let callback: Box<Box<dyn FnOnce() + Send + 'static>> = Box::from_raw(data as _);
-            callback()
+        // Trampoile Function For Fn
+        unsafe extern "C" fn trampoile(xarg: *mut std::os::raw::c_void) {
+            let pair: Box<(Box<dyn FnOnce() + Send + 'static>, Arc<AtomicBool>)> =
+                Box::from_raw(xarg as _);
+
+            let (call, over) = *pair;
+
+            call();
+
+            over.swap(true, Relaxed);
+
+            // NB: xarg pointer freed after
         }
 
-        let cbox: Box<Box<dyn FnOnce() + Send + 'static>> = Box::new(Box::new(start));
-        let data = Box::into_raw(cbox);
+        let over = Arc::new(AtomicBool::new(false));
+
+        let cbox: Box<(Box<dyn FnOnce() + Send + 'static>, Arc<AtomicBool>)> =
+            Box::new((Box::new(start), over.clone()));
+        let xarg = Box::into_raw(cbox);
 
         unsafe {
-            let inner = api::terminate_thread_create(Some(trampoile), data as _);
-            Self(ThreadInner { inner })
+            // create a thread here
+            let inner = api::terminate_thread_create(Some(trampoile), xarg as _);
+
+            let guard = Mutex::new(());
+            Self(Arc::new(ThreadInner { inner, over, guard }))
         }
     }
 
     /// Stop The Spawned Thread
     pub fn terminate(&self) {
+        let _guard = self.0.guard.lock().unwrap();
+
+        if self.0.over.load(Relaxed) {
+            // Call is already over
+            return;
+        }
+
+        // Terminate the call
         unsafe {
             api::terminate_thread_terminate(self.0.inner);
-        }
-    }
-
-    /// Yield Out The Current Thread
-    pub fn r#yield(&self) {
-        unsafe {
-            api::terminate_thread_yield(self.0.inner);
         }
     }
 }
@@ -52,6 +77,12 @@ impl Thread {
 impl Drop for Thread {
     fn drop(&mut self) {
         unsafe {
+            if !self.0.over.load(Relaxed) {
+                // Call is not over, terminate it
+                api::terminate_thread_terminate(self.0.inner);
+                return;
+            }
+
             api::terminate_thread_drop(self.0.inner);
         }
     }
@@ -74,8 +105,19 @@ mod tests {
 
     #[test]
     fn test_drop_immediately() {
-        let _ = Thread::spawn(move || loop {
+        Thread::spawn(move || loop {
             sleep(Duration::from_secs(1));
         });
+    }
+
+    #[test]
+    fn test_thread_send() {
+        let thread = Thread::spawn(move || loop {
+            sleep(Duration::from_secs(1));
+        });
+
+        std::thread::spawn(move || thread.terminate())
+            .join()
+            .expect("terminate in other thread failed.");
     }
 }

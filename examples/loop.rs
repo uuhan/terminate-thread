@@ -1,11 +1,12 @@
-use std::time::Duration;
+use std::{thread::sleep, time::Duration};
 use terminate_thread::Thread;
 
 fn main() {
-    Thread::spawn(|| loop {
+    let thread = Thread::spawn(|| loop {
         println!("loop in main");
-        std::thread::sleep(Duration::from_secs(1));
+        sleep(Duration::from_secs(1));
     });
 
-    std::thread::park();
+    sleep(Duration::from_secs(2));
+    thread.terminate();
 }

@@ -15,6 +15,8 @@ do it with the standard `std::thread` without putting into some `Sync` thing.
 terminate-thread = "0.1"
 ```
 
+### 1. Terminate an infinite loop
+
 ```rust
 use terminate_thread::Thread;
 
@@ -24,8 +26,9 @@ let thr = Thread::spawn(|| loop {
     std::thread::sleep(std::time::Duration::from_secs(1));
 });
 
-std::thread::sleep(std::time::Duration::from_secs(2));
-// Just stop it
+std::thread::sleep(std::time::Duration::from_secs(1));
+
+// Just terminate it
 thr.terminate()
 ```
 
@@ -48,10 +51,19 @@ but the real world is sophisticated to make any promise.
 
 ## Issues
 
-- [ ] Terminate the thread too quick panics. 🚧
+- [x] Terminate the thread too quick panics. v0.2.0
 
 ```rust
 use terminate_thread::Thread;
 Thread::spawn(|| {}); // ← bus error
 ```
 
+- [x] Terminate the job which panics. v0.2.0
+
+```rust
+use terminate_thread::Thread;
+Thread::spawn(|| panic!());
+
+let thread  = Thread::spawn(|| panic!());
+thread.terminate();
+```
