@@ -44,7 +44,7 @@ use terminate_thread::Thread;
 }
 ```
 
-### Panic tolerant
+### Panic tolerant (v0.3.1, macOS only)
 
 ```rust
 use terminate_thread::Thread;
