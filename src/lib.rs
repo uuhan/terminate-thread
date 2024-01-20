@@ -39,13 +39,22 @@ impl Thread {
                 ThreadGuard,
             )> = Box::from_raw(xarg as _);
 
+            #[allow(unused)]
             let (call, panic_info, guard) = *pair;
 
-            let call = std::panic::AssertUnwindSafe(call);
+            #[cfg(target_os = "macos")]
+            {
+                let call = std::panic::AssertUnwindSafe(call);
 
-            // Store the panic info
-            if let Err(info) = std::panic::catch_unwind(call) {
-                panic_info.lock().unwrap().replace(info);
+                // Store the panic info
+                if let Err(info) = std::panic::catch_unwind(call) {
+                    panic_info.lock().unwrap().replace(info);
+                }
+            }
+
+            #[cfg(target_os = "linux")]
+            {
+                call();
             }
 
             let mut over = guard.1.lock().unwrap();

@@ -93,3 +93,9 @@ use terminate_thread::Thread;
 Thread::spawn(|| {}); // ← bus error
 ```
 
+- [ ] `std::panic::AssertUnwindSafe()` does not work in linux. == v0.3.0
+
+```rust
+use terminate_thread::Thread;
+Thread::spawn(|| panic!()); // ← FATAL: exception not rethrown
+```
