@@ -49,7 +49,7 @@ It should work in any platform support *pthread*,
 
 but the real world is sophisticated to make any promise.
 
-## TODO
+## To-do 
 
 - [ ] Terminate the job which panics. 🚧
 

@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_INIT([FULL-PACKAGE-NAME], [VERSION], [BUG-REPORT-ADDRESS])
+AC_INIT(thread, 1, https://github.com/uuhan/terminate-thread)
 AC_CONFIG_SRCDIR([Thread.h])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR(m4)
