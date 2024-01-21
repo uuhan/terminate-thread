@@ -1,6 +1,12 @@
 ## What is this?
 
-It's just a simple terminatable thread implement with *pthread* for rust
+It's just a simple terminatable thread implement with *posix thread* for rust
+
+*LIMITATIONS*: `std::panic::catch_unwind` does not work in foreign language on Linux,
+
+**BE CAREFUL** with the panics in `Thread::spawn`.
+
+It works well in macOS. But, I can not figure out how to solve it on Linux.
 
 ## But Why?
 
